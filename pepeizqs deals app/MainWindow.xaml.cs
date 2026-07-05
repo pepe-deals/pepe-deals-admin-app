@@ -83,9 +83,11 @@ namespace pepeizqs_deals_app
 			ObjetosVentana.botonDescripcionesArrancar = botonDescripcionesArrancar;
 			ObjetosVentana.botonDescripcionesArrancar2 = botonDescripcionesArrancar2;
 			ObjetosVentana.botonDescripcionesArrancar3 = botonDescripcionesArrancar3;
+			ObjetosVentana.botonDescripcionesArrancar4 = botonDescripcionesArrancar4;
 			ObjetosVentana.botonDescripcionesArrancarTexto = botonDescripcionesArrancarTexto;
 			ObjetosVentana.botonDescripcionesArrancar2Texto = botonDescripcionesArrancar2Texto;
 			ObjetosVentana.botonDescripcionesArrancar3Texto = botonDescripcionesArrancar3Texto;
+			ObjetosVentana.botonDescripcionesArrancar4Texto = botonDescripcionesArrancar4Texto;
 			ObjetosVentana.tbDescripciones = tbDescripciones;
 			ObjetosVentana.tbDescripciones2 = tbDescripciones2;
 
@@ -150,9 +152,11 @@ namespace pepeizqs_deals_app
 			public static Button botonDescripcionesArrancar { get; set; }
 			public static Button botonDescripcionesArrancar2 { get; set; }
 			public static Button botonDescripcionesArrancar3 { get; set; }
+			public static Button botonDescripcionesArrancar4 { get; set; }
 			public static TextBlock botonDescripcionesArrancarTexto { get; set; }
 			public static TextBlock botonDescripcionesArrancar2Texto { get; set; }
 			public static TextBlock botonDescripcionesArrancar3Texto { get; set; }
+			public static TextBlock botonDescripcionesArrancar4Texto { get; set; }
 			public static TextBlock tbDescripciones { get; set; }
 			public static TextBlock tbDescripciones2 { get; set; }
 

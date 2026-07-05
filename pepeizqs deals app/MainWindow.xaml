@@ -234,6 +234,7 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
@@ -269,6 +270,18 @@
                                     <interfaz:Button2.Content>
                                         <Grid>
                                             <TextBlock x:Name="botonDescripcionesArrancar3Texto" Text="Arrancar Curators" Foreground="{StaticResource ColorFuente}"/>
+                                        </Grid>
+                                    </interfaz:Button2.Content>
+                                </interfaz:Button2>
+
+                                <interfaz:Button2 x:Name="botonDescripcionesArrancar4" Grid.Column="3" Background="{StaticResource ColorPrimario}" Padding="18,12" RequestedTheme="Dark" BorderThickness="1" Margin="5">
+                                    <interfaz:Button2.BorderBrush>
+                                        <SolidColorBrush Color="{StaticResource ColorFuente}" Opacity="0.7"/>
+                                    </interfaz:Button2.BorderBrush>
+
+                                    <interfaz:Button2.Content>
+                                        <Grid>
+                                            <TextBlock x:Name="botonDescripcionesArrancar4Texto" Text="Arrancar Bundles" Foreground="{StaticResource ColorFuente}"/>
                                         </Grid>
                                     </interfaz:Button2.Content>
                                 </interfaz:Button2>

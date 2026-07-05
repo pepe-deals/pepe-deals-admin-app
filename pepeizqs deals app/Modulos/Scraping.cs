@@ -57,9 +57,9 @@ namespace Modulos
 					int i = 0;
 					while (i < 1000)
 					{
-						if (html.Contains("id=" + Strings.ChrW(34) + "game_tile_amzn1.adg.product.") == true)
+						if (html.Contains("id=" + Strings.ChrW(34) + "game_tile_amzn1") == true)
 						{
-							int int1 = html.IndexOf("id=" + Strings.ChrW(34) + "game_tile_amzn1.adg.product.");
+							int int1 = html.IndexOf("id=" + Strings.ChrW(34) + "game_tile_amzn1");
 							string temp1 = html.Remove(0, int1 + 4);
 
 							html = html.Remove(0, int1 + 4);
@@ -100,6 +100,11 @@ namespace Modulos
 											break;
 										}
 									}
+								}
+
+								if (juego.Id.Contains("_test_id") == true)
+								{
+									añadir = false;
 								}
 
 								if (añadir == true)

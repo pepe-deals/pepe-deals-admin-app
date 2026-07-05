@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using static pepeizqs_deals_app.MainWindow;
 
@@ -29,6 +30,10 @@ namespace Modulos
 			ObjetosVentana.botonDescripcionesArrancar3.PointerEntered += Animaciones.EntraRatonBoton2;
 			ObjetosVentana.botonDescripcionesArrancar3.PointerExited += Animaciones.SaleRatonBoton2;
 
+			ObjetosVentana.botonDescripcionesArrancar4.Click += async (s, e) => await ArrancarBundlesClick(s, e);
+			ObjetosVentana.botonDescripcionesArrancar4.PointerEntered += Animaciones.EntraRatonBoton2;
+			ObjetosVentana.botonDescripcionesArrancar4.PointerExited += Animaciones.SaleRatonBoton2;
+
 			using (SqlConnection conexion = new SqlConnection(DatosPersonales.Servidor))
 			{
 				conexion.Open();
@@ -39,7 +44,9 @@ namespace Modulos
 										UNION ALL
 										SELECT 'noticias', CAST(COUNT(CASE WHEN descripcionSEO IS NOT NULL THEN 1 END) * 100.0 / COUNT(*) AS DECIMAL(5,2)) FROM noticias
 										UNION ALL
-										SELECT 'curators', CAST(COUNT(CASE WHEN descripcionSEO IS NOT NULL THEN 1 END) * 100.0 / COUNT(*) AS DECIMAL(5,2)) FROM curators";
+										SELECT 'curators', CAST(COUNT(CASE WHEN descripcionSEO IS NOT NULL THEN 1 END) * 100.0 / COUNT(*) AS DECIMAL(5,2)) FROM curators
+										UNION ALL
+										SELECT 'bundles', CAST(COUNT(CASE WHEN descripcionSEO IS NOT NULL THEN 1 END) * 100.0 / COUNT(*) AS DECIMAL(5,2)) FROM bundles";
 
 					using (SqlCommand comandoBuscar = new SqlCommand(sqlBuscar, conexion))
 					{
@@ -62,6 +69,10 @@ namespace Modulos
 								{
 									ObjetosVentana.botonDescripcionesArrancar3Texto.Text = "Arrancar Curators - " + porcentaje.ToString() + "%";
 								}
+								else if (tabla == "bundles")
+								{
+									ObjetosVentana.botonDescripcionesArrancar4Texto.Text = "Arrancar Bundles - " + porcentaje.ToString() + "%";
+								}
 							}
 						}
 					}
@@ -75,6 +86,7 @@ namespace Modulos
 			ObjetosVentana.botonDescripcionesArrancar.IsEnabled = false;
 			ObjetosVentana.botonDescripcionesArrancar2.IsEnabled = false;
 			ObjetosVentana.botonDescripcionesArrancar3.IsEnabled = false;
+			ObjetosVentana.botonDescripcionesArrancar4.IsEnabled = false;
 
 			int cantidadAñadidos = 0;
 			bool hayPendientes = true;
@@ -187,6 +199,7 @@ namespace Modulos
 			ObjetosVentana.botonDescripcionesArrancar.IsEnabled = true;
 			ObjetosVentana.botonDescripcionesArrancar2.IsEnabled = true;
 			ObjetosVentana.botonDescripcionesArrancar3.IsEnabled = true;
+			ObjetosVentana.botonDescripcionesArrancar4.IsEnabled = true;
 			PowerManager.Liberar();
 		}
 
@@ -196,6 +209,7 @@ namespace Modulos
 			ObjetosVentana.botonDescripcionesArrancar.IsEnabled = false;
 			ObjetosVentana.botonDescripcionesArrancar2.IsEnabled = false;
 			ObjetosVentana.botonDescripcionesArrancar3.IsEnabled = false;
+			ObjetosVentana.botonDescripcionesArrancar4.IsEnabled = false;
 
 			int cantidadAñadidos = 0;
 			bool hayPendientes = true;
@@ -282,6 +296,7 @@ namespace Modulos
 			ObjetosVentana.botonDescripcionesArrancar.IsEnabled = true;
 			ObjetosVentana.botonDescripcionesArrancar2.IsEnabled = true;
 			ObjetosVentana.botonDescripcionesArrancar3.IsEnabled = true;
+			ObjetosVentana.botonDescripcionesArrancar4.IsEnabled = true;
 			PowerManager.Liberar();
 		}
 
@@ -291,6 +306,7 @@ namespace Modulos
 			ObjetosVentana.botonDescripcionesArrancar.IsEnabled = false;
 			ObjetosVentana.botonDescripcionesArrancar2.IsEnabled = false;
 			ObjetosVentana.botonDescripcionesArrancar3.IsEnabled = false;
+			ObjetosVentana.botonDescripcionesArrancar4.IsEnabled = false;
 
 			int cantidadAñadidos = 0;
 			bool hayPendientes = true;
@@ -329,7 +345,7 @@ namespace Modulos
 									}
 
 									string prompt = $"""
-									Write a SEO description for a curator page, and it is MANDATORY that it be between 150 and 160 characters.
+									Write a SEO description in english for a curator page, and it is MANDATORY that it be between 150 and 160 characters.
 
 									Name: {curator.Nombre}
 									""";
@@ -384,6 +400,109 @@ namespace Modulos
 			ObjetosVentana.botonDescripcionesArrancar.IsEnabled = true;
 			ObjetosVentana.botonDescripcionesArrancar2.IsEnabled = true;
 			ObjetosVentana.botonDescripcionesArrancar3.IsEnabled = true;
+			ObjetosVentana.botonDescripcionesArrancar4.IsEnabled = true;
+			PowerManager.Liberar();
+		}
+
+		private static async Task ArrancarBundlesClick(object sender, RoutedEventArgs e)
+		{
+			PowerManager.MantenerActivo();
+			ObjetosVentana.botonDescripcionesArrancar.IsEnabled = false;
+			ObjetosVentana.botonDescripcionesArrancar2.IsEnabled = false;
+			ObjetosVentana.botonDescripcionesArrancar3.IsEnabled = false;
+			ObjetosVentana.botonDescripcionesArrancar4.IsEnabled = false;
+
+			int cantidadAñadidos = 0;
+			bool hayPendientes = true;
+
+			while (hayPendientes == true)
+			{
+				hayPendientes = false;
+
+				using (SqlConnection conexion = new SqlConnection(DatosPersonales.Servidor))
+				{
+					conexion.Open();
+
+					if (conexion.State == System.Data.ConnectionState.Open)
+					{
+						string sqlBuscar = @"SELECT id, nombre, tienda, juegos FROM bundles WHERE 
+						nombre IS NOT NULL
+						AND tienda IS NOT NULL
+						AND juegos IS NOT NULL
+						AND descripcionSEO IS NULL";
+
+						using (SqlCommand comandoBuscar = new SqlCommand(sqlBuscar, conexion))
+						{
+							using (SqlDataReader lector = comandoBuscar.ExecuteReader())
+							{
+								while (lector.Read())
+								{
+									hayPendientes = true;
+									ObjetosVentana.tbDescripciones2.Text = "Cantidad Añadidos: " + cantidadAñadidos.ToString();
+
+									BundleSEO bundle = new BundleSEO();
+
+									bundle.Id = lector.GetInt32(0);
+									bundle.Nombre = lector.GetString(1);
+									bundle.Tienda = lector.GetString(2);
+
+									var juegos = JsonSerializer.Deserialize<List<BundleJuego>>(lector.GetString(3));
+									bundle.Juegos = string.Join(", ", juegos.Select(j => j.Nombre).ToList());
+
+									string prompt = $"""
+									Write a SEO description in english for a bundle page, and it is MANDATORY that it be between 150 and 160 characters.
+
+									Name: {bundle.Nombre}
+									Store: {bundle.Tienda}
+									Games: {bundle.Juegos}
+									""";
+
+									var ollama = new OllamaApiClient(new Uri("http://localhost:11434/"), "llama3.2:latest");
+
+									var chat = new Chat(ollama, "You are a SEO description writer in english. You ONLY output the description text, which must be strictly between 150 and 160 characters. No character counts, no explanations, no quotes, no double quotes, no labels. Just the raw text.");
+									string texto = string.Empty;
+
+									await foreach (var mensaje in chat.SendAsync(prompt))
+									{
+										texto = texto + mensaje;
+									}
+
+									texto = texto.Replace(Strings.ChrW(34).ToString(), null);
+
+									if (texto.Length > 160)
+									{
+										int ultimoEspacio = texto.LastIndexOf(' ', 156);
+										texto = ultimoEspacio != -1 ? texto[..ultimoEspacio] + " ..." : texto[..156] + " ...";
+									}
+
+									ObjetosVentana.tbDescripciones.Text = bundle.Id.ToString() + " - " + bundle.Nombre + "\n\n" + texto.Length.ToString() + "\n" + texto;
+
+									if (texto.Length >= 150 && texto.Length <= 160)
+									{
+										using (SqlConnection conexionUpdate = new SqlConnection(DatosPersonales.Servidor))
+										{
+											conexionUpdate.Open();
+											using (SqlCommand cmd = new SqlCommand("UPDATE bundles SET descripcionSEO = @desc WHERE id = @id", conexionUpdate))
+											{
+												cmd.Parameters.AddWithValue("@desc", texto);
+												cmd.Parameters.AddWithValue("@id", bundle.Id);
+												cmd.ExecuteNonQuery();
+
+												cantidadAñadidos += 1;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			ObjetosVentana.botonDescripcionesArrancar.IsEnabled = true;
+			ObjetosVentana.botonDescripcionesArrancar2.IsEnabled = true;
+			ObjetosVentana.botonDescripcionesArrancar3.IsEnabled = true;
+			ObjetosVentana.botonDescripcionesArrancar4.IsEnabled = true;
 			PowerManager.Liberar();
 		}
 	}
@@ -410,6 +529,20 @@ namespace Modulos
 		public int Id { get; set; }
 		public string Nombre { get; set; }
 		public string Descripcion { get; set; }
+	}
+
+	public class BundleSEO
+	{
+		public int Id { get; set; }
+		public string Nombre { get; set; }
+		public string Tienda { get; set; }
+		public string Juegos { get; set; }
+	}
+
+	public class BundleJuego
+	{
+		[JsonPropertyName("Nombre")]
+		public string Nombre { get; set; }
 	}
 
 	public static class SteamCategorias
