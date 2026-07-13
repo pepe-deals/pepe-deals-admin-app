@@ -101,6 +101,22 @@ namespace Modulos
 
 					if (conexion.State == System.Data.ConnectionState.Open)
 					{
+						//string añadir = "ALTER TABLE juegos ADD steamMachineTokens NVARCHAR(1024) NULL";
+
+						//using (SqlCommand comandoAñadir = new SqlCommand(añadir, conexion))
+						//{
+						//	try
+						//	{
+						//		comandoAñadir.CommandTimeout = 0;
+						//		comandoAñadir.ExecuteNonQuery();
+						//	}
+						//	catch (SqlException ex)
+						//	{
+								
+						//	}
+						//}
+
+
 						string sqlBuscar = @"SELECT id, tipo, nombre, JSON_VALUE(caracteristicas, '$.Descripcion'), categorias, etiquetas FROM juegos WHERE nombre IS NOT NULL AND nombre != ''
 						AND caracteristicas IS NOT NULL AND JSON_VALUE(caracteristicas, '$.Descripcion') IS NOT NULL AND JSON_VALUE(caracteristicas, '$.Descripcion') != ''
 						AND categorias IS NOT NULL AND categorias != ''
@@ -154,40 +170,82 @@ namespace Modulos
 									Tags: {SteamEtiquetas.Resolver(juego.Etiquetas?.Take(6))}
 									""";
 
-									var ollama = new OllamaApiClient(new Uri("http://localhost:11434/"), "llama3.2:latest");
-
-									var chat = new Chat(ollama, "You are a SEO description writer. You ONLY output the description text, which must be strictly between 150 and 160 characters. No character counts, no explanations, no quotes, no double quotes, no labels. Just the raw text.");
-									string texto = string.Empty;
-
-									await foreach (var mensaje in chat.SendAsync(prompt))
+									bool sensible = false;
+									bool sensible2 = false;
+									int i = 0;
+									while (i < 10)
 									{
-										texto = texto + mensaje;
-									}
-
-									texto = texto.Replace(Strings.ChrW(34).ToString(), null);
-
-									if (texto.Length > 160)
-									{
-										int ultimoEspacio = texto.LastIndexOf(' ', 156);
-										texto = ultimoEspacio != -1 ? texto[..ultimoEspacio] + " ..." : texto[..156] + " ...";
-									}
-
-									ObjetosVentana.tbDescripciones.Text = juego.Id.ToString() + " - " + juego.Nombre + "\n\n" + texto.Length.ToString() + "\n" + texto;
-
-									if (texto.Length >= 150 && texto.Length <= 160)
-									{
-										using (SqlConnection conexionUpdate = new SqlConnection(DatosPersonales.Servidor))
+										if (sensible == true)
 										{
-											conexionUpdate.Open();
-											using (SqlCommand cmd = new SqlCommand("UPDATE juegos SET descripcionSEO = @desc WHERE id = @id", conexionUpdate))
-											{
-												cmd.Parameters.AddWithValue("@desc", texto);
-												cmd.Parameters.AddWithValue("@id", juego.Id);
-												cmd.ExecuteNonQuery();
+											prompt = $"""
+											Write a SEO description for a deals {tipoFinal} page, and it is MANDATORY that it be between 150 and 160 characters.
 
-												cantidadAñadidos += 1;
+											Name: {juego.Nombre}
+											Type: {tipoFinal}
+											Categories {SteamCategorias.Resolver(juego.Categorias?.Take(6).Where(i => i.StartsWith("Family") == false))}
+											""";
+										}
+
+										if (sensible2 == true)
+										{
+											prompt = $"""
+											Write a SEO description for a deals {tipoFinal} page, and it is MANDATORY that it be between 150 and 160 characters.
+											
+											Type: {tipoFinal}
+											Categories {SteamCategorias.Resolver(juego.Categorias?.Take(6).Where(i => i.StartsWith("Family") == false))}
+											""";
+										}
+
+										var ollama = new OllamaApiClient(new Uri("http://localhost:11434/"), "llama3.2:latest");
+
+										var chat = new Chat(ollama, "You are a SEO description writer. You ONLY output the description text, which must be strictly between 150 and 160 characters. No character counts, no explanations, no quotes, no double quotes, no labels. Just the raw text.");
+										string texto = string.Empty;
+
+										await foreach (var mensaje in chat.SendAsync(prompt))
+										{
+											texto = texto + mensaje;
+										}
+
+										texto = texto.Replace(Strings.ChrW(34).ToString(), null);
+
+										if (texto.Length > 160)
+										{
+											int ultimoEspacio = texto.LastIndexOf(' ', 156);
+											texto = ultimoEspacio != -1 ? texto[..ultimoEspacio] + " ..." : texto[..156] + " ...";
+										}
+
+										if (texto.StartsWith("I cannot create") == true || texto.StartsWith("I can't create") == true)
+										{
+											if (i > 5)
+											{
+												sensible2 = true;
+											}
+											else
+											{
+												sensible = true;
 											}
 										}
+
+										ObjetosVentana.tbDescripciones.Text = juego.Id.ToString() + " - " + juego.Nombre + "\n\n" + texto.Length.ToString() + "\n" + texto;
+
+										if (texto.Length >= 150 && texto.Length <= 160 && texto.StartsWith("I can") == false)
+										{
+											using (SqlConnection conexionUpdate = new SqlConnection(DatosPersonales.Servidor))
+											{
+												conexionUpdate.Open();
+												using (SqlCommand cmd = new SqlCommand("UPDATE juegos SET descripcionSEO = @desc WHERE id = @id", conexionUpdate))
+												{
+													cmd.Parameters.AddWithValue("@desc", texto);
+													cmd.Parameters.AddWithValue("@id", juego.Id);
+													cmd.ExecuteNonQuery();
+
+													cantidadAñadidos += 1;
+													break;
+												}
+											}
+										}
+
+										i += 1;
 									}
 								}
 							}
