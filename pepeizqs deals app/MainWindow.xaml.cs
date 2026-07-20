@@ -80,10 +80,12 @@ namespace pepeizqs_deals_app
 
 			ObjetosVentana.gridDescripciones = gridDescripciones;
 			ObjetosVentana.svDescripciones = svDescripciones;
+			ObjetosVentana.botonDescripcionesArrancar0 = botonDescripcionesArrancar0;
 			ObjetosVentana.botonDescripcionesArrancar = botonDescripcionesArrancar;
 			ObjetosVentana.botonDescripcionesArrancar2 = botonDescripcionesArrancar2;
 			ObjetosVentana.botonDescripcionesArrancar3 = botonDescripcionesArrancar3;
 			ObjetosVentana.botonDescripcionesArrancar4 = botonDescripcionesArrancar4;
+			ObjetosVentana.botonDescripcionesArrancarTexto0 = botonDescripcionesArrancarTexto0;
 			ObjetosVentana.botonDescripcionesArrancarTexto = botonDescripcionesArrancarTexto;
 			ObjetosVentana.botonDescripcionesArrancar2Texto = botonDescripcionesArrancar2Texto;
 			ObjetosVentana.botonDescripcionesArrancar3Texto = botonDescripcionesArrancar3Texto;
@@ -149,10 +151,12 @@ namespace pepeizqs_deals_app
 
 			public static Grid gridDescripciones { get; set; }
 			public static ScrollViewer svDescripciones { get; set; }
+			public static Button botonDescripcionesArrancar0 { get; set; }
 			public static Button botonDescripcionesArrancar { get; set; }
 			public static Button botonDescripcionesArrancar2 { get; set; }
 			public static Button botonDescripcionesArrancar3 { get; set; }
 			public static Button botonDescripcionesArrancar4 { get; set; }
+			public static TextBlock botonDescripcionesArrancarTexto0 { get; set; }
 			public static TextBlock botonDescripcionesArrancarTexto { get; set; }
 			public static TextBlock botonDescripcionesArrancar2Texto { get; set; }
 			public static TextBlock botonDescripcionesArrancar3Texto { get; set; }
@@ -230,6 +234,7 @@ namespace pepeizqs_deals_app
 							}
 							else if (tb.Text == "Descripciones")
 							{
+								Descripciones.CargarPorcentajes();
 								Pestañas.Visibilidad(gridDescripciones, true, null, false);
 							}
 						}
