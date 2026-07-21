@@ -6,6 +6,7 @@ using Microsoft.VisualBasic;
 using OllamaSharp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.Json;
@@ -86,6 +87,11 @@ namespace Modulos
 		{
 			Bloquear();
 
+			if (DetectarOllama() == false)
+			{
+				await EjecutarOllama();
+			}
+
 			await Juegos();
 			await Noticias();
 			await Curators();
@@ -98,6 +104,11 @@ namespace Modulos
 		{
 			Bloquear();
 
+			if (DetectarOllama() == false)
+			{
+				await EjecutarOllama();
+			}
+
 			await Juegos();
 
 			Liberar();
@@ -106,6 +117,11 @@ namespace Modulos
 		private static async Task ArrancarNoticiasClick(object sender, RoutedEventArgs e)
 		{
 			Bloquear();
+
+			if (DetectarOllama() == false)
+			{
+				await EjecutarOllama();
+			}
 
 			await Noticias();
 
@@ -116,6 +132,11 @@ namespace Modulos
 		{
 			Bloquear();
 
+			if (DetectarOllama() == false)
+			{
+				await EjecutarOllama();
+			}
+
 			await Curators();
 
 			Liberar();
@@ -124,6 +145,11 @@ namespace Modulos
 		private static async Task ArrancarBundlesClick(object sender, RoutedEventArgs e)
 		{
 			Bloquear();
+
+			if (DetectarOllama() == false)
+			{
+				await EjecutarOllama();
+			}
 
 			await Bundles();
 
@@ -151,8 +177,41 @@ namespace Modulos
 			ObjetosVentana.botonDescripcionesArrancar4.IsEnabled = true;
 		}
 
+		private static bool DetectarOllama()
+		{
+			return Process.GetProcessesByName("ollama").Any();
+		}
+
+		private static async Task EjecutarOllama()
+		{
+			var info = new ProcessStartInfo
+			{
+				FileName = @"C:\Users\pepei\AppData\Local\Programs\Ollama\ollama app.exe",
+				UseShellExecute = true
+			};
+
+			Process.Start(info);
+
+			int intentos = 0;
+			bool listo = false;
+
+			while (intentos < 30 && listo == false)
+			{
+				await Task.Delay(1000);
+				listo = DetectarOllama(); 
+				intentos += 1;
+			}
+
+			if (listo == false)
+			{
+				return;
+			}
+		}
+
 		private static async Task Juegos()
 		{
+			var ollama = new OllamaApiClient(new Uri("http://localhost:11434/"), "llama3.2:latest");
+
 			int cantidadAñadidos = 0;
 			bool hayPendientes = true;
 
@@ -251,8 +310,6 @@ namespace Modulos
 								""";
 							}
 
-							var ollama = new OllamaApiClient(new Uri("http://localhost:11434/"), "llama3.2:latest");
-
 							var chat = new Chat(ollama, "You are a SEO description writer. You ONLY output the description text, which must be strictly between 150 and 160 characters. No character counts, no explanations, no quotes, no double quotes, no labels. Just the raw text.");
 							string texto = string.Empty;
 
@@ -303,6 +360,8 @@ namespace Modulos
 
 		private static async Task Noticias()
 		{
+			var ollama = new OllamaApiClient(new Uri("http://localhost:11434/"), "llama3.2:latest");
+
 			int cantidadAñadidos = 0;
 			bool hayPendientes = true;
 
@@ -336,8 +395,6 @@ namespace Modulos
 						Title: {noticia.TituloEn}
 						Old Description: {noticia.ContenidoEn}
 						""";
-
-						var ollama = new OllamaApiClient(new Uri("http://localhost:11434/"), "llama3.2:latest");
 
 						var chat = new Chat(ollama, "You are a SEO description writer. You ONLY output the description text, which must be strictly between 150 and 160 characters. No character counts, no explanations, no quotes, no double quotes, no labels. Just the raw text.");
 						string texto = string.Empty;
@@ -373,6 +430,8 @@ namespace Modulos
 
 		private static async Task Curators()
 		{
+			var ollama = new OllamaApiClient(new Uri("http://localhost:11434/"), "llama3.2:latest");
+
 			int cantidadAñadidos = 0;
 			bool hayPendientes = true;
 
@@ -410,8 +469,6 @@ namespace Modulos
 							prompt = prompt + $"Old Description: {curator.Descripcion}";
 						}
 
-						var ollama = new OllamaApiClient(new Uri("http://localhost:11434/"), "llama3.2:latest");
-
 						var chat = new Chat(ollama, "You are a SEO description writer. You ONLY output the description text, which must be strictly between 150 and 160 characters. No character counts, no explanations, no quotes, no double quotes, no labels. Just the raw text.");
 						string texto = string.Empty;
 
@@ -446,6 +503,8 @@ namespace Modulos
 
 		private static async Task Bundles()
 		{
+			var ollama = new OllamaApiClient(new Uri("http://localhost:11434/"), "llama3.2:latest");
+
 			int cantidadAñadidos = 0;
 			bool hayPendientes = true;
 
@@ -484,8 +543,6 @@ namespace Modulos
 						Store: {bundle.Tienda}
 						Games: {bundle.Juegos}
 						""";
-
-						var ollama = new OllamaApiClient(new Uri("http://localhost:11434/"), "llama3.2:latest");
 
 						var chat = new Chat(ollama, "You are a SEO description writer in english. You ONLY output the description text, which must be strictly between 150 and 160 characters. No character counts, no explanations, no quotes, no double quotes, no labels. Just the raw text.");
 						string texto = string.Empty;
@@ -1074,25 +1131,5 @@ namespace Modulos
 			string.Join(", ", ids
 				.Select(id => int.TryParse(id, out var num) && Etiquetas.TryGetValue(num, out var nombre) ? nombre : null)
 				.Where(n => n != null));
-	}
-
-	public static class PowerManager
-	{
-		[DllImport("kernel32.dll", SetLastError = true)]
-		private static extern uint SetThreadExecutionState(uint esFlags);
-
-		private const uint ES_CONTINUOUS = 0x80000000;
-		private const uint ES_SYSTEM_REQUIRED = 0x00000001;
-		private const uint ES_DISPLAY_REQUIRED = 0x00000002;
-
-		public static void MantenerActivo()
-		{
-			SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_DISPLAY_REQUIRED);
-		}
-
-		public static void Liberar()
-		{
-			SetThreadExecutionState(ES_CONTINUOUS);
-		}
 	}
 }
