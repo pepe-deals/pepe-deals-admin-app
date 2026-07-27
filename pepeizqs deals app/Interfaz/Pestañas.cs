@@ -1,8 +1,9 @@
-﻿using CommunityToolkit.WinUI.UI.Controls;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
+using System;
 using Windows.UI;
 using static pepeizqs_deals_app.MainWindow;
 
@@ -64,6 +65,7 @@ namespace Interfaz
 			ObjetosVentana.gridRSS.Visibility = Visibility.Collapsed;
 			ObjetosVentana.gridSteam.Visibility = Visibility.Collapsed;
             ObjetosVentana.gridDescripciones.Visibility = Visibility.Collapsed;
+			ObjetosVentana.gridBots.Visibility = Visibility.Collapsed;
 			ObjetosVentana.gridOpciones.Visibility = Visibility.Collapsed;
 
 			grid.Visibility = Visibility.Visible;
@@ -105,11 +107,9 @@ namespace Interfaz
 
             if (imagenEnlace != null)
             {
-				ImageEx imagen = new ImageEx
+				Image imagen = new Image
 				{
-					Source = imagenEnlace,
-					IsCacheEnabled = true,
-					EnableLazyLoading = true,
+					Source = new BitmapImage(new Uri(imagenEnlace)),
 					MaxHeight = 20,
 					MaxWidth = 20,
 					Margin = new Thickness(0, 0, 15, 0)

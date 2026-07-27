@@ -218,7 +218,7 @@ namespace Modulos
 			}
 			catch 
 			{
-				Herramientas.Notificaciones.Toast("Fallo Steam");
+				
 			}
 			
 			Pestañas.Visibilidad(ObjetosVentana.gridSteam, true, null, false);

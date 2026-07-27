@@ -24,6 +24,7 @@ namespace pepeizqs_deals_app
 			Scraping.Cargar();
 			Steam.Cargar();
 			Descripciones.Cargar();
+			Bots.Cargar();
 
 			Pestañas.Visibilidad(gridHumble, true, null, false);
 		}
@@ -92,6 +93,13 @@ namespace pepeizqs_deals_app
 			ObjetosVentana.botonDescripcionesArrancar4Texto = botonDescripcionesArrancar4Texto;
 			ObjetosVentana.tbDescripciones = tbDescripciones;
 			ObjetosVentana.tbDescripciones2 = tbDescripciones2;
+
+			//-----------------------------------------------------------------
+
+			ObjetosVentana.gridBots = gridBots;
+			ObjetosVentana.svBots = svBots;
+			ObjetosVentana.botonBotsAbrirLog = botonBotsAbrirLog;
+			ObjetosVentana.tbBotsRegistro = tbBotsRegistro;
 
 			//-----------------------------------------------------------------
 
@@ -166,12 +174,20 @@ namespace pepeizqs_deals_app
 
 			//-----------------------------------------------------------------
 
+			public static Grid gridBots { get; set; }
+			public static ScrollViewer svBots { get; set; }
+			public static Button botonBotsAbrirLog { get; set; }
+			public static TextBlock tbBotsRegistro { get; set; }
+
+			//-----------------------------------------------------------------
+
 			public static Grid gridOpciones { get; set; }
 			public static ScrollViewer svOpciones { get; set; }
 		}
 
 		private void nvPrincipal_Loaded(object sender, RoutedEventArgs e)
 		{
+			Pestañas.CreadorItems("Bots");
 			Pestañas.CreadorItems("Descripciones");
 			Pestañas.CreadorItems("Steam");
 			Pestañas.CreadorItems("RSS");
@@ -236,6 +252,10 @@ namespace pepeizqs_deals_app
 							{
 								Descripciones.CargarPorcentajes();
 								Pestañas.Visibilidad(gridDescripciones, true, null, false);
+							}
+							else if (tb.Text == "Bots")
+							{
+								Pestañas.Visibilidad(gridBots, true, null, false);
 							}
 						}
 					}

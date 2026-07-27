@@ -69,6 +69,10 @@ namespace Interfaz
 			{
 				ObjetosVentana.svDescripciones.ChangeView(null, 0, null);
 			}
+			else if (ObjetosVentana.gridBots.Visibility == Visibility.Visible)
+			{
+				ObjetosVentana.svBots.ChangeView(null, 0, null);
+			}
 			else if (ObjetosVentana.gridOpciones.Visibility == Visibility.Visible)
             {
                 ObjetosVentana.svOpciones.ChangeView(null, 0, null);

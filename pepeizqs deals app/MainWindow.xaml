@@ -307,6 +307,35 @@
                     </ScrollViewer>
                 </Grid>
 
+                <Grid x:Name="gridBots" Visibility="Collapsed">
+                    <ScrollViewer x:Name="svBots" VerticalScrollBarVisibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0">
+                                <interfaz:Button2 x:Name="botonBotsAbrirLog" Background="{StaticResource ColorPrimario}" Padding="18,12" RequestedTheme="Dark" BorderThickness="1" Margin="5">
+                                    <interfaz:Button2.BorderBrush>
+                                        <SolidColorBrush Color="{StaticResource ColorFuente}" Opacity="0.7"/>
+                                    </interfaz:Button2.BorderBrush>
+
+                                    <interfaz:Button2.Content>
+                                        <Grid>
+                                            <TextBlock Text="Abrir Log" Foreground="{StaticResource ColorFuente}"/>
+                                        </Grid>
+                                    </interfaz:Button2.Content>
+                                </interfaz:Button2>
+                            </Grid>
+
+                            <Grid Grid.Row="1">
+                                <TextBlock x:Name="tbBotsRegistro" Margin="20" Foreground="{StaticResource ColorFuente}"/>
+                            </Grid>
+                        </Grid>
+                    </ScrollViewer>
+                </Grid>
+
                 <Grid x:Name="gridOpciones" Visibility="Collapsed">
                     <ScrollViewer x:Name="svOpciones" VerticalScrollBarVisibility="Visible" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                         <TextBlock Text="test2"/>

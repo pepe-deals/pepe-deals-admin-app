@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -66,20 +65,64 @@ namespace Modulos
 					if (tabla == "juegos")
 					{
 						ObjetosVentana.botonDescripcionesArrancarTexto.Text = "Arrancar Juegos - " + porcentaje.ToString() + "%";
+
+						if (porcentaje >= 100)
+						{
+							ObjetosVentana.botonDescripcionesArrancar.IsEnabled = false;
+						}
+						else
+						{
+							ObjetosVentana.botonDescripcionesArrancar.IsEnabled = true;
+						}
 					}
 					else if (tabla == "noticias")
 					{
 						ObjetosVentana.botonDescripcionesArrancar2Texto.Text = "Arrancar Noticias - " + porcentaje.ToString() + "%";
+
+						if (porcentaje >= 100)
+						{
+							ObjetosVentana.botonDescripcionesArrancar2.IsEnabled = false;
+						}
+						else
+						{
+							ObjetosVentana.botonDescripcionesArrancar2.IsEnabled = true;
+						}
 					}
 					else if (tabla == "curators")
 					{
 						ObjetosVentana.botonDescripcionesArrancar3Texto.Text = "Arrancar Curators - " + porcentaje.ToString() + "%";
+
+						if (porcentaje >= 100)
+						{
+							ObjetosVentana.botonDescripcionesArrancar3.IsEnabled = false;
+						}
+						else
+						{
+							ObjetosVentana.botonDescripcionesArrancar3.IsEnabled = true;
+						}
 					}
 					else if (tabla == "bundles")
 					{
 						ObjetosVentana.botonDescripcionesArrancar4Texto.Text = "Arrancar Bundles - " + porcentaje.ToString() + "%";
+
+						if (porcentaje >= 100)
+						{
+							ObjetosVentana.botonDescripcionesArrancar4.IsEnabled = false;
+						}
+						else
+						{
+							ObjetosVentana.botonDescripcionesArrancar4.IsEnabled = true;
+						}
 					}
 				}
+			}
+
+			if (ObjetosVentana.botonDescripcionesArrancar.IsEnabled == false &&
+				ObjetosVentana.botonDescripcionesArrancar2.IsEnabled == false &&
+				ObjetosVentana.botonDescripcionesArrancar3.IsEnabled == false &&
+				ObjetosVentana.botonDescripcionesArrancar4.IsEnabled == false)
+			{
+				ObjetosVentana.botonDescripcionesArrancar0.IsEnabled = false;
 			}
 		}
 
@@ -97,6 +140,7 @@ namespace Modulos
 			await Curators();
 			await Bundles();
 
+			MatarOllama();
 			Liberar();
 		}
 
@@ -111,6 +155,7 @@ namespace Modulos
 
 			await Juegos();
 
+			MatarOllama();
 			Liberar();
 		}
 
@@ -124,7 +169,8 @@ namespace Modulos
 			}
 
 			await Noticias();
-
+			
+			MatarOllama();
 			Liberar();
 		}
 
@@ -139,6 +185,7 @@ namespace Modulos
 
 			await Curators();
 
+			MatarOllama();
 			Liberar();
 		}
 
@@ -153,6 +200,7 @@ namespace Modulos
 
 			await Bundles();
 
+			MatarOllama();
 			Liberar();
 		}
 
@@ -205,6 +253,26 @@ namespace Modulos
 			if (listo == false)
 			{
 				return;
+			}
+		}
+
+		private static void MatarOllama()
+		{
+			string[] nombresProcesos = { "ollama app", "ollama", "ollama_llama_server" };
+
+			foreach (var nombre in nombresProcesos)
+			{
+				foreach (var proceso in Process.GetProcessesByName(nombre))
+				{
+					try
+					{
+						proceso.Kill(entireProcessTree: true);
+						proceso.WaitForExit(5000);
+					}
+					catch
+					{
+					}
+				}
 			}
 		}
 

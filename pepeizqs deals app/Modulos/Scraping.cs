@@ -135,7 +135,7 @@ namespace Modulos
 						}
 						catch (Exception ex)
 						{
-							Notificaciones.Toast("Error al guardar los juegos de Amazon Luna Standard: " + ex.Message);
+							
 						}
 					}
 
