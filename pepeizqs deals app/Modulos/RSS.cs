@@ -1,4 +1,5 @@
-﻿using FontAwesome6.Fonts;
+﻿using Dapper;
+using FontAwesome6.Fonts;
 using Interfaz;
 using Microsoft.Data.SqlClient;
 using Microsoft.UI.Xaml;
@@ -6,7 +7,9 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using static pepeizqs_deals_app.MainWindow;
 
 namespace Modulos
@@ -15,103 +18,42 @@ namespace Modulos
 	{
 		public static string dominio = "https://pepe.deals";
 
-		public static void Cargar()
+		public static async Task Cargar()
 		{
 			List<Noticia> noticias = new List<Noticia>();
 
 			using (SqlConnection conexion = new SqlConnection(DatosPersonales.Servidor))
 			{
-				conexion.Open();
+				string sqlBuscar = "SELECT TOP(10) * FROM noticias ORDER BY id DESC";
 
-				if (conexion.State == System.Data.ConnectionState.Open)
+				var filas = await conexion.QueryAsync(sqlBuscar);
+
+				foreach (var fila in filas)
 				{
-					string sqlBuscar = "SELECT TOP(10) * FROM noticias ORDER BY id DESC ";
+					var valores = ((IDictionary<string, object>)fila).Values.ToList();
 
-					using (SqlCommand comando = new SqlCommand(sqlBuscar, conexion))
+					Noticia noticia = new Noticia
 					{
-						using (SqlDataReader lector = comando.ExecuteReader())
-						{
-							while (lector.Read())
-							{
-								Noticia noticia = new Noticia();
+						Id = (int)valores[0],
+						Tipo = int.Parse((string)valores[1])
+					};
 
-								noticia.Id = lector.GetInt32(0);
-								noticia.Tipo = int.Parse(lector.GetString(1));
+					if (valores[2] != null) noticia.Imagen = (string)valores[2];
+					if (valores[3] != null) noticia.Enlace = (string)valores[3];
+					if (valores[4] != null) noticia.Juegos = (string)valores[4];
+					if (valores[5] != null) noticia.FechaEmpieza = (DateTime)valores[5];
+					if (valores[6] != null) noticia.FechaTermina = (DateTime)valores[6];
+					if (valores[7] != null) noticia.BundleTipo = int.Parse((string)valores[7]);
+					if (valores[8] != null) noticia.GratisTipo = int.Parse((string)valores[8]);
+					if (valores[9] != null) noticia.SuscripcionTipo = int.Parse((string)valores[9]);
+					if (valores[10] != null) noticia.TituloEn = (string)valores[10];
+					if (valores[11] != null) noticia.TituloEs = (string)valores[11];
+					if (valores[12] != null) noticia.ContenidoEn = (string)valores[12];
+					if (valores[13] != null) noticia.ContenidoEs = (string)valores[13];
+					if (valores[18] != null) noticia.SteamEn = JsonSerializer.Deserialize<NoticiaSteam>((string)valores[18]);
+					if (valores[19] != null) noticia.SteamEs = JsonSerializer.Deserialize<NoticiaSteam>((string)valores[19]);
 
-								if (lector.IsDBNull(2) == false)
-								{
-									noticia.Imagen = lector.GetString(2);
-								}
-
-								if (lector.IsDBNull(3) == false)
-								{
-									noticia.Enlace = lector.GetString(3);
-								}
-
-								if (lector.IsDBNull(4) == false)
-								{
-									noticia.Juegos = lector.GetString(4);
-								}
-
-								if (lector.IsDBNull(5) == false)
-								{
-									noticia.FechaEmpieza = lector.GetDateTime(5);
-								}
-
-								if (lector.IsDBNull(6) == false)
-								{
-									noticia.FechaTermina = lector.GetDateTime(6);
-								}
-
-								if (lector.IsDBNull(7) == false)
-								{
-									noticia.BundleTipo = int.Parse(lector.GetString(7));
-								}
-
-								if (lector.IsDBNull(8) == false)
-								{
-									noticia.GratisTipo = int.Parse(lector.GetString(8));
-								}
-
-								if (lector.IsDBNull(9) == false)
-								{
-									noticia.SuscripcionTipo = int.Parse(lector.GetString(9));
-								}
-
-								if (lector.IsDBNull(10) == false)
-								{
-									noticia.TituloEn = lector.GetString(10);
-								}
-
-								if (lector.IsDBNull(11) == false)
-								{
-									noticia.TituloEs = lector.GetString(11);
-								}
-
-								if (lector.IsDBNull(12) == false)
-								{
-									noticia.ContenidoEn = lector.GetString(12);
-								}
-
-								if (lector.IsDBNull(13) == false)
-								{
-									noticia.ContenidoEs = lector.GetString(13);
-								}
-
-								if (lector.IsDBNull(18) == false)
-								{
-									noticia.SteamEn = JsonSerializer.Deserialize<NoticiaSteam>(lector.GetString(18));
-								}
-
-								if (lector.IsDBNull(19) == false)
-								{
-									noticia.SteamEs = JsonSerializer.Deserialize<NoticiaSteam>(lector.GetString(19));
-								}
-
-								noticias.Add(noticia);
-							}
-						}
-					}
+					noticias.Add(noticia);
 				}
 			}
 

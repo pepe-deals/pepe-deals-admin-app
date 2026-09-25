@@ -6,12 +6,15 @@ using Microsoft.VisualBasic;
 using OllamaSharp;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using static pepeizqs_deals_app.MainWindow;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Modulos
 {
@@ -40,8 +43,26 @@ namespace Modulos
 			ObjetosVentana.botonDescripcionesArrancar4.PointerExited += Animaciones.SaleRatonBoton2;
 		}
 
-		public static void CargarPorcentajes()
+		public static async Task CargarPorcentajes()
 		{
+			//using var connection = new SqlConnection(DatosPersonales.Servidor);
+
+			//string tienda = "epicgamesstore";
+
+			//await connection.ExecuteAsync($"ALTER TABLE tienda{tienda} ADD descartado_bit BIT NULL;");
+
+			//await connection.ExecuteAsync($@"
+			//	UPDATE tienda{tienda}
+			//	SET descartado_bit = CASE 
+			//		WHEN descartado = 'si' THEN 1
+			//		WHEN descartado = 'no' THEN 0
+			//		ELSE NULL
+			//	END;
+			//");
+
+			//await connection.ExecuteAsync($@"ALTER TABLE tienda{tienda} DROP COLUMN descartado;
+			//	EXEC sp_rename 'tienda{tienda}.descartado_bit', 'descartado', 'COLUMN'; ");
+
 			using (SqlConnection conexion = new SqlConnection(DatosPersonales.Servidor))
 			{
 				string sqlBuscar = @"SELECT 'juegos' AS tabla,
@@ -55,7 +76,7 @@ namespace Modulos
 									UNION ALL
 									SELECT 'bundles', CAST(COUNT(CASE WHEN descripcionSEO IS NOT NULL THEN 1 END) * 100.0 / COUNT(*) AS DECIMAL(5,2)) FROM bundles";
 
-				var resultados = conexion.Query(sqlBuscar);
+				var resultados = await conexion.QueryAsync(sqlBuscar, commandTimeout: 0);
 
 				foreach (var fila in resultados)
 				{
