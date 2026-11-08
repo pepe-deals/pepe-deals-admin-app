@@ -255,7 +255,7 @@ namespace Modulos
 		{
 			var info = new ProcessStartInfo
 			{
-				FileName = @"C:\Users\pepei\AppData\Local\Programs\Ollama\ollama app.exe",
+				FileName = @"C:\Users\pepe\AppData\Local\Programs\Ollama\ollama app.exe",
 				UseShellExecute = true
 			};
 

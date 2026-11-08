@@ -28,7 +28,7 @@ namespace RedesSociales
 				await Task.Delay(2000);
 				await wv.ExecuteScriptAsync(@"
 					const img = document.querySelector('img[src*=""type_28.png""]');
-					if (img) img.closest('._1rJ2OUAMjHh_d8Wpp9FZeF').click();
+					if (img) img.closest('.BvzCfPk-EvM-').click();
 				");
 			}
 		}
@@ -96,7 +96,7 @@ namespace RedesSociales
 
 					await wv.ExecuteScriptAsync(@"
 						(function() {
-							const input = document.querySelector('.ZAOXnBPqM-Jpp-1EVcR39');
+							const input = document.querySelector('.ErlX8kRUHHI-');
 							if (!input) return;
 							const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
 							setter.call(input, '" + noticia.SteamEn.Titulo.Replace("'", null) + @"');
@@ -107,7 +107,7 @@ namespace RedesSociales
 
 					await wv.ExecuteScriptAsync(@"
 						(function() {
-							const input = document.querySelector('._32XZf0gEFw0CwBBwiLjlEv');
+							const input = document.querySelector('.Kr-BK11DmGk-');
 							if (!input) return;
 							const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
 							setter.call(input, '" + noticia.SteamEn.Subtitulo.Replace("'", null) + @"');
@@ -170,7 +170,7 @@ namespace RedesSociales
 
 					await wv.ExecuteScriptAsync(@"
 						(function() {
-							const input = document.querySelector('.ZAOXnBPqM-Jpp-1EVcR39');
+							const input = document.querySelector('.ErlX8kRUHHI-');
 							if (!input) return;
 							const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
 							setter.call(input, '" + noticia.SteamEs.Titulo.Replace("'", null) + @"');
@@ -181,7 +181,7 @@ namespace RedesSociales
 
 					await wv.ExecuteScriptAsync(@"
 						(function() {
-							const input = document.querySelector('._32XZf0gEFw0CwBBwiLjlEv');
+							const input = document.querySelector('.Kr-BK11DmGk-');
 							if (!input) return;
 							const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
 							setter.call(input, '" + noticia.SteamEs.Subtitulo.Replace("'", null) + @"');
@@ -263,9 +263,26 @@ namespace RedesSociales
 				{
 					await Task.Delay(2000);
 					await wv.ExecuteScriptAsync(@"
+						(async function() {
+							for (let i = 0; i < 20; i++) {
+								const btn = Array.from(document.querySelectorAll('button.DialogButton.Primary[role=""button""]'))
+									.find(b => b.textContent.trim() === 'Publicar' && !b.disabled && b.offsetParent !== null);
+
+								if (btn) {
+									btn.click();
+									return 'clicado';
+								}
+								await new Promise(r => setTimeout(r, 500));
+							}
+							return 'no encontrado';
+						})();
+					");
+
+					await Task.Delay(2000);
+					await wv.ExecuteScriptAsync(@"
 						(function() {
 							const btn = Array.from(document.querySelectorAll('[role=""button""]'))
-								.find(b => b.textContent.trim().startsWith('Publicar'));
+								.find(b => b.textContent.trim().startsWith('Saltar advertencias y continuar publicando...'));
 							if (!btn) return;
 							btn.click();
 						})();
@@ -274,18 +291,8 @@ namespace RedesSociales
 					await Task.Delay(1000);
 					await wv.ExecuteScriptAsync(@"
 						(function() {
-							const btn = Array.from(document.querySelectorAll('[role=""button""]'))
-								.find(b => b.textContent.trim().startsWith('Skip Warnings and Continue Publishing...'));
-							if (!btn) return;
-							btn.click();
-						})();
-					");
-
-					await Task.Delay(1000);
-					await wv.ExecuteScriptAsync(@"
-						(function() {
-							const btn = Array.from(document.querySelectorAll('[role=""button""]'))
-								.find(b => b.textContent.trim().startsWith('Publish'));
+							const btn = Array.from(document.querySelectorAll('button[type=""submit""].DialogButton[role=""button""]'))
+								.find(b => b.textContent.trim() === 'Publicar');
 							if (!btn) return;
 							btn.click();
 						})();
